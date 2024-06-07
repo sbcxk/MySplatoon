@@ -33,7 +33,7 @@ class MySplatoon(Plugin):
         if self.content == "/涂地":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_regular(self.MySplatoon())
+            result = get_regular(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -49,7 +49,7 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓开放":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_bankara_open(self.MySplatoon())
+            result = get_bankara_open(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -65,7 +65,7 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓挑战":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_bankara_challenge(self.MySplatoon())
+            result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -81,7 +81,7 @@ class MySplatoon(Plugin):
         if self.content == "/打工":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_coop_stages(self.MySplatoon())
+            result = get_coop_stages(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -97,7 +97,7 @@ class MySplatoon(Plugin):
         if self.content == "/活动":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_event(self.MySplatoon())
+            result = get_event(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -113,7 +113,7 @@ class MySplatoon(Plugin):
         if self.content == "/x比赛":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_x_match(self.MySplatoon())
+            result = get_x_match(formatS3JSON(self.MySplatoon()))
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
