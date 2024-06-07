@@ -22,7 +22,7 @@ class MySplatoon(Plugin):
         logger.info(f"[{__class__.__name__}] inited")
 
     def get_help_text(self, **kwargs):
-        help_text = f"发送【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/X赛】、【/打工】、【/活动】获取 Splatoon3 比赛信息，更多功能正在开发中~"
+        help_text = f"发送【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取 Splatoon3 比赛信息，更多功能正在开发中~"
         return help_text
 
     def on_handle_context(self, e_context: EventContext):
@@ -33,7 +33,8 @@ class MySplatoon(Plugin):
         if self.content == "/涂地":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_regular(MySplatoon().MySplatoon())
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_regular(data)
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -49,7 +50,8 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓开放":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_bankara_open(MySplatoon().MySplatoon())
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_bankara_open(data)
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -65,7 +67,8 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓挑战":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_bankara_challenge(MySplatoon().MySplatoon())
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_bankara_challenge(data)
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -81,7 +84,8 @@ class MySplatoon(Plugin):
         if self.content == "/打工":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_coop_stages(MySplatoon().MySplatoon())
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_coop_stages(data)
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -97,7 +101,8 @@ class MySplatoon(Plugin):
         if self.content == "/活动":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            result = get_event(MySplatoon().MySplatoon())
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_event(data)
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -110,6 +115,22 @@ class MySplatoon(Plugin):
                 e_context.action = EventAction.BREAK_PASS
             return
 
+        if self.content == "/x比赛":
+            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+            reply = Reply()
+            data = formatS3JSON(MySplatoon().MySplatoon())
+            result = get_x_match(data)
+            if result is not None:
+                reply.type = ReplyType.TEXT
+                reply.content = result
+                e_context["reply"] = reply
+                e_context.action = EventAction.BREAK_PASS
+            else:
+                reply.type = ReplyType.ERROR
+                reply.content = "获取失败,等待修复⌛️"
+                e_context["reply"] = reply
+                e_context.action = EventAction.BREAK_PASS
+            return
 
     def MySplatoon(self):
         url = BASE_URL_DM
@@ -224,22 +245,6 @@ def formatS3JSON(data_dict):
                 Group(group_data["id"], group_data["groupTitle"], group_data["icon"], sub_cards, start_at, end_at,
                       weapons, badges, boss, subTitle, description))
         contents.append(Content(content_data["id"], content_data["title"], groups))
-
-    print("Tabs:")
-    for tab in tabs:
-        if tab.subTabs is not None:
-            for group in tab.subTabs:
-                print(group)
-        else:
-            print(tab)
-
-    print("\nContents:")
-    # 打印存储的结构
-    for content in contents:
-        print(content.title)
-        for group in content.groups:
-            print(group)
-        print()
 
     return contents
 
