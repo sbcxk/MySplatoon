@@ -134,10 +134,11 @@ class MySplatoon(Plugin):
             response = requests.get(url=url, params=params, headers=headers, timeout=2)
             if response.status_code == 200:
                 json_data = response.json()
-                logger.info(f"接口返回的数据：{json_data}")
-                if json_data.get('code') == 200 and json_data.get('text'):
-                    text = json_data['text']
+                # logger.info(f"接口返回的数据：{json_data}")
+                if json_data.get('status') and json_data.get('data'):
+                    text = json_data['data']
                     logger.info(f"主接口获取成功：{text}")
+                    # res = formatS3JSON(json_data.get('data'))
                     return json_data
                 else:
                     logger.error(f"主接口返回值异常:{json_data}")
