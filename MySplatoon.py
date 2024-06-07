@@ -5,8 +5,8 @@ from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from common.log import logger
 
-
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
+
 
 @plugins.register(name="MySplatoon",
                   desc="查询屎不拉通3日程信息",
@@ -29,88 +29,33 @@ class MySplatoon(Plugin):
         if e_context['context'].type != ContextType.TEXT:
             return
         self.content = e_context["context"].content.strip()
-
+        result, reply = None, None
         if self.content == "/涂地":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_regular(formatS3JSON(self.MySplatoon()))
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = result
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
-                reply.type = ReplyType.ERROR
-                reply.content = "获取失败,等待修复⌛️"
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            return
 
-        if self.content == "/蛮颓开放":
+        elif self.content == "/蛮颓开放":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_bankara_open(formatS3JSON(self.MySplatoon()))
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = result
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
-                reply.type = ReplyType.ERROR
-                reply.content = "获取失败,等待修复⌛️"
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            return
 
-        if self.content == "/蛮颓挑战":
+        elif self.content == "/蛮颓挑战":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = result
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
-                reply.type = ReplyType.ERROR
-                reply.content = "获取失败,等待修复⌛️"
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            return
 
-        if self.content == "/打工":
+        elif self.content == "/打工":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_coop_stages(formatS3JSON(self.MySplatoon()))
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = result
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
-                reply.type = ReplyType.ERROR
-                reply.content = "获取失败,等待修复⌛️"
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            return
 
-        if self.content == "/活动":
+        elif self.content == "/活动":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_event(formatS3JSON(self.MySplatoon()))
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = result
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
-                reply.type = ReplyType.ERROR
-                reply.content = "获取失败,等待修复⌛️"
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            return
 
-        if self.content == "/x比赛":
+        elif self.content == "/x比赛":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
             result = get_x_match(formatS3JSON(self.MySplatoon()))
@@ -125,6 +70,18 @@ class MySplatoon(Plugin):
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
             return
+
+        if result is not None:
+            reply.type = ReplyType.TEXT
+            reply.content = result
+            e_context["reply"] = reply
+            e_context.action = EventAction.BREAK_PASS
+        else:
+            reply.type = ReplyType.ERROR
+            reply.content = "获取失败,等待修复⌛️"
+            e_context["reply"] = reply
+            e_context.action = EventAction.BREAK_PASS
+        return
 
     def MySplatoon(self):
         url = BASE_URL_DM
@@ -151,6 +108,7 @@ class MySplatoon(Plugin):
         logger.error("所有接口都挂了,无法获取")
         return None
 
+
 if __name__ == "__main__":
     my_splatoon_plugin = MySplatoon()
     result = my_splatoon_plugin
@@ -158,6 +116,7 @@ if __name__ == "__main__":
         print("获取到的文案内容：", result)
     else:
         print("获取失败")
+
 
 # 创建结构体来存储数据
 class Tab:
@@ -246,21 +205,17 @@ def formatS3JSON(data_dict):
 
 def get_coop_stages(data):
     text = "鲑鱼跑\n"
-    for group in data[4].groups:
+    for i, group in enumerate(data[4].groups):
         text += "地图: " + group.subCards[0]['subCardTitle'] + "\n"
-        text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
+        text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt) + "\n"
         text += "武器: "
         for index, weapon in enumerate(group.weapons):
             text += weapon['name']
             if index < len(group.weapons) - 1:  # 检查是否是最后一个元素
                 text += "、"
-        text += "\n"
-        text += "Boss: "
-        text += group.boss['name']
-        text += "\n\n"
-        # print(group.boss)
-        # print(group)
-        # print(contents[4].groups)
+        text += "\nBoss: " + group.boss['name']
+        if i < len(data[4].groups) - 1:  # 检查是否是最后一个元素
+            text += "\n\n"
     return text
 
 
@@ -281,7 +236,7 @@ def get_bankara_challenge(data):
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
         text += remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[1].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
@@ -292,7 +247,7 @@ def get_bankara_open(data):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[2].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
@@ -304,18 +259,18 @@ def get_event(data):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[5].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
 
 def get_x_match(data):
     text = "X比赛\n"
-    for index, group in enumerate(data[2].groups):
+    for index, group in enumerate(data[3].groups):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[3].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
