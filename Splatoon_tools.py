@@ -11,6 +11,7 @@ class Tab:
     def __str__(self):
         return f"Tab(id={self.id}, key={self.key}, name={self.name}, image={self.image}, isDropdown={self.isDropdown}, subTabs={self.subTabs})"
 
+
 class Content:
     def __init__(self, id, title, groups):
         self.id = id
@@ -20,8 +21,9 @@ class Content:
     def __str__(self):
         return f"Content(id={self.id}, title={self.title}, groups={self.groups})"
 
+
 class Group:
-    def __init__(self, id, groupTitle, icon, subCards, startAt, endAt, weapons, badges,boss,subTitle,description):
+    def __init__(self, id, groupTitle, icon, subCards, startAt, endAt, weapons, badges, boss, subTitle, description):
         self.id = id
         self.groupTitle = groupTitle
         self.icon = icon
@@ -36,8 +38,8 @@ class Group:
 
     def __str__(self):
         sub_cards_str = "\n".join([
-                                      f"SubCard(id={sub_card['id']}, key={sub_card['key']}, pic={sub_card['pic']}, subCardTitle={sub_card['subCardTitle']})"
-                                      for sub_card in self.subCards])
+            f"SubCard(id={sub_card['id']}, key={sub_card['key']}, pic={sub_card['pic']}, subCardTitle={sub_card['subCardTitle']})"
+            for sub_card in self.subCards])
         return f"Group(id={self.id}, groupTitle={self.groupTitle}, icon={self.icon}, subCards=[{sub_cards_str}], startAt={self.startAt}, endAt={self.endAt}, weapons={self.weapons}, badges={self.badges})"
 
 
@@ -75,7 +77,7 @@ def formatS3JSON(data_dict):
                 description = group_data["description"]
             groups.append(
                 Group(group_data["id"], group_data["groupTitle"], group_data["icon"], sub_cards, start_at, end_at,
-                      weapons, badges,boss,subTitle,description))
+                      weapons, badges, boss, subTitle, description))
         contents.append(Content(content_data["id"], content_data["title"], groups))
 
     print("Tabs:")
@@ -96,6 +98,7 @@ def formatS3JSON(data_dict):
 
     return contents
 
+
 def get_coop_stages(data):
     text = "鲑鱼跑\n"
     for group in data[4].groups:
@@ -115,19 +118,20 @@ def get_coop_stages(data):
         # print(contents[4].groups)
     return text
 
+
 def get_regular(data):
     text = "涂地/一般比赛\n"
-    for index,group in enumerate(data[0].groups):
-        text += "地图: "
+    for index, group in enumerate(data[0].groups):
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
         if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
+
 def get_bankara_challenge(data):
     text = "蛮颓(挑战)\n"
-    for index,group in enumerate(data[1].groups):
+    for index, group in enumerate(data[1].groups):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
@@ -136,26 +140,29 @@ def get_bankara_challenge(data):
             text += "\n\n"
     return text
 
+
 def get_bankara_open(data):
     text = "蛮颓(开放)\n"
-    for index,group in enumerate(data[2].groups):
-        text += "模式: " + group.groupTitle + "\n"
-        text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
-        text += "时间: "+ remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
-            text += "\n\n"
-    return text
-
-def get_event(data):
-    text = "活动比赛\n"
-    for index,group in enumerate(data[5].groups):
-        text += "活动: " + group.subTitle+" - "+group.description + "\n"
+    for index, group in enumerate(data[2].groups):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
         if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
+
+
+def get_event(data):
+    text = "活动比赛\n"
+    for index, group in enumerate(data[5].groups):
+        text += "活动: " + group.subTitle + " - " + group.description + "\n"
+        text += "模式: " + group.groupTitle + "\n"
+        text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
+        text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
+        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+            text += "\n\n"
+    return text
+
 
 def get_x_match(data):
     text = "X比赛\n"
@@ -166,6 +173,7 @@ def get_x_match(data):
         if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
+
 
 def remove_year(date_str):
     return date_str[3:]
