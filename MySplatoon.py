@@ -33,8 +33,7 @@ class MySplatoon(Plugin):
         if self.content == "/涂地":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_regular(data)
+            result = get_regular(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -50,8 +49,7 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓开放":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_bankara_open(data)
+            result = get_bankara_open(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -67,8 +65,7 @@ class MySplatoon(Plugin):
         if self.content == "/蛮颓挑战":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_bankara_challenge(data)
+            result = get_bankara_challenge(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -84,8 +81,7 @@ class MySplatoon(Plugin):
         if self.content == "/打工":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_coop_stages(data)
+            result = get_coop_stages(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -101,8 +97,7 @@ class MySplatoon(Plugin):
         if self.content == "/活动":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_event(data)
+            result = get_event(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -118,8 +113,7 @@ class MySplatoon(Plugin):
         if self.content == "/x比赛":
             logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
             reply = Reply()
-            data = formatS3JSON(MySplatoon().MySplatoon())
-            result = get_x_match(data)
+            result = get_x_match(self.MySplatoon())
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -158,7 +152,7 @@ class MySplatoon(Plugin):
 
 if __name__ == "__main__":
     my_splatoon_plugin = MySplatoon()
-    result = my_splatoon_plugin.MySplatoon()
+    result = my_splatoon_plugin
     if result:
         print("获取到的文案内容：", result)
     else:
@@ -252,7 +246,7 @@ def formatS3JSON(data_dict):
 def get_coop_stages(data):
     text = "鲑鱼跑\n"
     for group in data[4].groups:
-        text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
+        text += "地图: " + group.subCards[0]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
         text += "武器: "
         for index, weapon in enumerate(group.weapons):
