@@ -6,7 +6,7 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
-
+options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动"]
 
 @plugins.register(name="MySplatoon",
                   desc="查询屎不拉通3日程信息",
@@ -30,35 +30,48 @@ class MySplatoon(Plugin):
             return
         self.content = e_context["context"].content.strip()
         result, reply = None, None
-        if self.content == "/涂地":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_regular(formatS3JSON(self.MySplatoon()))
+        if self.content in options:
+            if self.content == "/涂地":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_regular(formatS3JSON(self.MySplatoon()))
 
-        elif self.content == "/蛮颓开放":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_bankara_open(formatS3JSON(self.MySplatoon()))
+            elif self.content == "/蛮颓开放":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_bankara_open(formatS3JSON(self.MySplatoon()))
 
-        elif self.content == "/蛮颓挑战":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
+            elif self.content == "/蛮颓挑战":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
 
-        elif self.content == "/打工":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_coop_stages(formatS3JSON(self.MySplatoon()))
+            elif self.content == "/打工":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_coop_stages(formatS3JSON(self.MySplatoon()))
 
-        elif self.content == "/活动":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_event(formatS3JSON(self.MySplatoon()))
+            elif self.content == "/活动":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_event(formatS3JSON(self.MySplatoon()))
 
-        elif self.content == "/x比赛":
-            logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-            reply = Reply()
-            result = get_x_match(formatS3JSON(self.MySplatoon()))
+            elif self.content == "/x比赛":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_x_match(formatS3JSON(self.MySplatoon()))
+                if result is not None:
+                    reply.type = ReplyType.TEXT
+                    reply.content = result
+                    e_context["reply"] = reply
+                    e_context.action = EventAction.BREAK_PASS
+                else:
+                    reply.type = ReplyType.ERROR
+                    reply.content = "获取失败,等待修复⌛️"
+                    e_context["reply"] = reply
+                    e_context.action = EventAction.BREAK_PASS
+                return
+
             if result is not None:
                 reply.type = ReplyType.TEXT
                 reply.content = result
@@ -70,18 +83,6 @@ class MySplatoon(Plugin):
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
             return
-
-        if result is not None:
-            reply.type = ReplyType.TEXT
-            reply.content = result
-            e_context["reply"] = reply
-            e_context.action = EventAction.BREAK_PASS
-        else:
-            reply.type = ReplyType.ERROR
-            reply.content = "获取失败,等待修复⌛️"
-            e_context["reply"] = reply
-            e_context.action = EventAction.BREAK_PASS
-        return
 
     def MySplatoon(self):
         url = BASE_URL_DM
