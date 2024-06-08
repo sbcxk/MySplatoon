@@ -32,6 +32,8 @@ class MySplatoon(Plugin):
         self.content = e_context["context"].content.strip()
         result, reply = None, None
         if self.content in options:
+            # 默认文本回复
+            reply.type = ReplyType.TEXT
             if self.content == "/涂地":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
@@ -61,20 +63,15 @@ class MySplatoon(Plugin):
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
                 result = get_x_match(formatS3JSON(self.MySplatoon()))
-                if result is not None:
-                    reply.type = ReplyType.TEXT
-                    reply.content = result
-                    e_context["reply"] = reply
-                    e_context.action = EventAction.BREAK_PASS
-                else:
-                    reply.type = ReplyType.ERROR
-                    reply.content = "获取失败,等待修复⌛️"
-                    e_context["reply"] = reply
-                    e_context.action = EventAction.BREAK_PASS
-                return
+
+            elif self.content == "/打工图":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                result = get_coop_stages_image(self.MySplatoon())
+                # 图片类型
+                reply.type = ReplyType.IMAGE
 
             if result is not None:
-                reply.type = ReplyType.TEXT
                 reply.content = result
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
