@@ -97,7 +97,7 @@ class MySplatoon(Plugin):
                 # logger.info(f"接口返回的数据：{json_data}")
                 if json_data.get('status') and json_data.get('data'):
                     text = json_data['data']
-                    logger.info(f"主接口获取成功：{text}")
+                    # logger.info(f"主接口获取成功：{text}")
                     # res = formatS3JSON(json_data.get('data'))
                     return json_data
                 else:

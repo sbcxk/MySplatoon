@@ -196,7 +196,7 @@ def get_coop_info(data, _all=None):
     return stage, stage_name, weapon, time, boss, mode
 
 
-def get_coop_stages(stage, stage_name, weapon, time, boss):
+def get_coop_stage(stage, stage_name, weapon, time, boss):
     """绘制 打工地图"""
 
     # 校验是否需要绘制小鲑鱼(现在时间处于该打工时间段内)
@@ -291,7 +291,7 @@ def get_coop_stages_image(data):
     # 获取数据
     stage, stage_name, weapon, time, boss, mode = get_coop_info(data)
     # 绘制图片
-    image = get_coop_stages(stage, stage_name, weapon, time, boss)
+    image = get_coop_stage(stage, stage_name, weapon, time, boss)
     return image
 
 
