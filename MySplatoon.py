@@ -1,11 +1,10 @@
 import requests
 import plugins
 from plugins import *
+from plugins.MySplatoon.splatoon_tools import *
 from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from common.log import logger
-
-from splatoon_tools import *
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
 options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动"]
