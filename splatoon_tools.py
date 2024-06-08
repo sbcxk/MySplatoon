@@ -80,42 +80,22 @@ def formatS3JSON(data_dict):
                       weapons, badges, boss, subTitle, description))
         contents.append(Content(content_data["id"], content_data["title"], groups))
 
-    print("Tabs:")
-    for tab in tabs:
-        if tab.subTabs is not None:
-            for group in tab.subTabs:
-                print(group)
-        else:
-            print(tab)
-
-    print("\nContents:")
-    # 打印存储的结构
-    for content in contents:
-        print(content.title)
-        for group in content.groups:
-            print(group)
-        print()
-
     return contents
 
 
 def get_coop_stages(data):
     text = "鲑鱼跑\n"
-    for group in data[4].groups:
-        text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
-        text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
+    for i, group in enumerate(data[4].groups):
+        text += "地图: " + group.subCards[0]['subCardTitle'] + "\n"
+        text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt) + "\n"
         text += "武器: "
         for index, weapon in enumerate(group.weapons):
             text += weapon['name']
             if index < len(group.weapons) - 1:  # 检查是否是最后一个元素
                 text += "、"
-        text += "\n"
-        text += "Boss: "
-        text += group.boss['name']
-        text += "\n\n"
-        # print(group.boss)
-        # print(group)
-        # print(contents[4].groups)
+        text += "\nBoss: " + group.boss['name']
+        if i < len(data[4].groups) - 1:  # 检查是否是最后一个元素
+            text += "\n\n"
     return text
 
 
@@ -136,7 +116,7 @@ def get_bankara_challenge(data):
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
         text += remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[1].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
@@ -147,7 +127,7 @@ def get_bankara_open(data):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[2].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
@@ -159,18 +139,18 @@ def get_event(data):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[5].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
 
 def get_x_match(data):
     text = "X比赛\n"
-    for index, group in enumerate(data[2].groups):
+    for index, group in enumerate(data[3].groups):
         text += "模式: " + group.groupTitle + "\n"
         text += "地图: " + group.subCards[0]['subCardTitle'] + " & " + group.subCards[1]['subCardTitle'] + "\n"
         text += "时间: " + remove_year(group.startAt) + " ~ " + remove_year(group.endAt)
-        if index < len(data[0].groups) - 1:  # 检查是否是最后一个元素
+        if index < len(data[3].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text
 
