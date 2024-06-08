@@ -7,7 +7,7 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
-options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动"]
+options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "/打工图"]
 
 @plugins.register(name="MySplatoon",
                   desc="查询屎不拉通3日程信息",
@@ -32,36 +32,40 @@ class MySplatoon(Plugin):
         self.content = e_context["context"].content.strip()
         result, reply = None, None
         if self.content in options:
-            # 默认文本回复
-            reply.type = ReplyType.TEXT
             if self.content == "/涂地":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_regular(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/蛮颓开放":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_bankara_open(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/蛮颓挑战":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/打工":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_coop_stages(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/活动":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_event(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/x比赛":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
+                reply.type = ReplyType.TEXT
                 result = get_x_match(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/打工图":
