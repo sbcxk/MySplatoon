@@ -8,7 +8,7 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import requests
 
-DIR_RESOURCE = f"{os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))}/image"
+DIR_RESOURCE = f"{os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))}/MySplatoon"
 time_format_ymdh = "%Y-%m-%dT%H"
 HTTP_TIME_OUT = 5.0  # 请求超时，秒
 
