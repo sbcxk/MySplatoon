@@ -1,4 +1,6 @@
 import datetime
+import tempfile
+
 from plugins.MySplatoon.image_processer_tools import *
 from plugins.MySplatoon.utils import *
 from common.log import logger
@@ -292,7 +294,11 @@ def get_coop_stages_image(data):
     stage, stage_name, weapon, time, boss, mode = get_coop_info(data)
     # 绘制图片
     image = get_coop_stage(stage, stage_name, weapon, time, boss)
-    return image
+    # 将 Image 对象保存到临时文件
+    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+        image.save(temp_file.name)
+        file_path = temp_file.name
+    return file_path
 
 
 def remove_year(date_str):
