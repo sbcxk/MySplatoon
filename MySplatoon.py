@@ -54,7 +54,7 @@ class MySplatoon(Plugin):
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
                 reply.type = ReplyType.TEXT
-                result = get_coop_stages(formatS3JSON(self.MySplatoon()))
+                result = get_coop_stage(formatS3JSON(self.MySplatoon()))
 
             elif self.content == "/活动":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
