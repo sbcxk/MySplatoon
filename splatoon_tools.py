@@ -295,10 +295,10 @@ def get_coop_stages_image(data):
     # 绘制图片
     image = get_coop_stage(stage, stage_name, weapon, time, boss)
     # 将 Image 对象保存到临时文件
-    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
-        image.save(temp_file.name)
-        file_path = temp_file.name
-    return file_path
+    # with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+    #     image.save(temp_file.name)
+    #     file_path = temp_file.name
+    return image
 
 
 def remove_year(date_str):

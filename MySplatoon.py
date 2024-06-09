@@ -1,3 +1,5 @@
+import io
+
 import requests
 import plugins
 from plugins import *
@@ -71,7 +73,9 @@ class MySplatoon(Plugin):
             elif self.content == "/打工图":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
-                result = get_coop_stages_image(self.MySplatoon())
+                img = get_coop_stages_image(self.MySplatoon())
+                b_img = io.BytesIO()
+                result = img.save(b_img, format="PNG")
                 # 图片类型
                 reply.type = ReplyType.IMAGE
 
