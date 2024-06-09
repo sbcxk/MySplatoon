@@ -243,7 +243,7 @@ def get_coop_stage(stage, stage_name, weapon, time, boss):
         #     paste_with_a(coop_stage_bg, coop_fish_img, coop_fish_img_pos)
     for pos, val in enumerate(stage):
         # 绘制打工地图
-        stage_bg = get_image_from_url(val).resize(stage_bg_size, Image.ANTIALIAS)
+        stage_bg = get_image_from_url(val).resize(stage_bg_size, Image.LANCZOS)
         stage_bg_pos = (500, 2 + 162 * pos)
         coop_stage_bg.paste(stage_bg, stage_bg_pos)
 
