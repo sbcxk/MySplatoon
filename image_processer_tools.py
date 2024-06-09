@@ -290,7 +290,10 @@ def paste_with_a(image_background, image_pasted, pos):
 def get_stage_name_bg(stage_name, font_size=24):
     """绘制 地图名称及文字底图"""
     ttf = ImageFont.truetype(ttf_path_chinese, font_size)
-    w, h = ttf.getsize(stage_name)
+    # w, h = ttf.getsize(stage_name)
+    image = Image.new('RGB', (1, 1), (0, 0, 0))  # 创建一个临时图像
+    draw = ImageDraw.Draw(image)
+    w, h = draw.textsize(stage_name, font=ttf)
     stage_name_bg_size = (w + 20, h + 10)
     # 新建画布
     stage_name_bg = Image.new("RGBA", stage_name_bg_size, (34, 34, 34))
