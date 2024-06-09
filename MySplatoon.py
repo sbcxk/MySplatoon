@@ -75,7 +75,8 @@ class MySplatoon(Plugin):
                 reply = Reply()
                 img = get_coop_stages_image(self.MySplatoon())
                 b_img = io.BytesIO()
-                result = img.save(b_img, format="PNG")
+                img.save(b_img, format="PNG")
+                result = b_img
                 # 图片类型
                 reply.type = ReplyType.IMAGE
 
