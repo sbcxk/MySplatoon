@@ -261,7 +261,7 @@ def get_coop_stage(stage, stage_name, weapon, time, boss):
             # 绘制武器底图
             weapon_bg_img = Image.new("RGBA", weapon_size, (30, 30, 30))
             # 绘制武器图片
-            weapon_image = get_image_from_url(val_weapon).resize(weapon_size, Image.ANTIALIAS)
+            weapon_image = get_image_from_url(val_weapon).resize(weapon_size, Image.LANCZOS)
             paste_with_a(weapon_bg_img, weapon_image, (0, 0))
             coop_stage_bg.paste(weapon_bg_img, (120 * pos_weapon + 20, 60 + 160 * pos))
     for pos, val in enumerate(boss):
