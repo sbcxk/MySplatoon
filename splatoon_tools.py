@@ -678,21 +678,32 @@ def get_cached_image(data):
     global image_cache
     current_time = time.time()
 
-    format_data = formatS3JSON(data)
-    # 计算 splatoon_data.a 的哈希值作为缓存字典的键
-    data_hash = hashlib.sha256(str(format_data[0]).encode('utf-8')).hexdigest()
-    # 检查缓存是否存在且未过期
-    if data_hash in image_cache:
-        cached_image, timestamp = image_cache[data_hash]
-        if current_time - timestamp < CACHE_TTL:
-            return cached_image
+    try:
+        format_data = formatS3JSON(data)
+        # 计算 splatoon_data.a 的哈希值作为缓存字典的键
+        data_hash = hashlib.sha256(str(format_data[0].groups[0].startAt).encode('utf-8')).hexdigest()
+        logger.info(f"data_hash: {data_hash}")
+        # 检查缓存是否存在且未过期
+        if data_hash in image_cache:
+            cached_image, timestamp = image_cache[data_hash]
+            logger.info(f"cached_image: {cached_image}, timestamp: {timestamp}, current_time: {current_time}")
+            if current_time - timestamp < CACHE_TTL:
+                return cached_image
 
-    # 如果缓存过期或不存在，重新生成图片
-    img = get_stages_image(format_data)
-    b_img = io.BytesIO()
-    img.save(b_img, format="PNG")
+        # 如果缓存过期或不存在，重新生成图片
+        img = get_stages_image(format_data)
+        b_img = io.BytesIO()
+        img.save(b_img, format="PNG")
 
-    # 更新缓存
-    image_cache[data_hash] = (b_img, current_time)
+        # 更新缓存
+        image_cache[data_hash] = (b_img, current_time)
 
-    return b_img
+        return b_img
+    except Exception as e:
+        logger.info(f"主接口获取成功：{e}")
+        # 如果缓存部分出现异常，直接走正常逻辑
+        img = get_stages_image(format_data)
+        b_img = io.BytesIO()
+        img.save(b_img, format="PNG")
+        return b_img
+
