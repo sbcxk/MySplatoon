@@ -1,9 +1,17 @@
 import datetime
+import io
 import tempfile
+import time
 
 from plugins.MySplatoon.image_processer_tools import *
 from plugins.MySplatoon.utils import *
 from common.log import logger
+
+# 全局缓存字典
+image_cache = {}
+
+# 缓存有效期（秒）
+CACHE_TTL = 2 * 60 * 60  # 2小时
 
 # 类 图片信息 ImageInfo
 class ImageInfo:
@@ -658,8 +666,30 @@ def get_stages(schedule, num_list, contest_match=None, rule_match=None):
 def get_stages_image(data):
     """取 对战图片"""
     # 获取数据
-    schedule, new_num_list = get_stage_info(data)
+    num_list = [0, 1, 2]
     # print(schedule)
     # 绘制图片
-    image = get_stages(schedule, new_num_list)
+    image = get_stages(data, num_list)
     return image
+
+
+def get_cached_image(data):
+    global image_cache
+    current_time = time.time()
+
+    format_data = formatS3JSON(data)
+    # 检查缓存是否存在且未过期
+    if format_data in image_cache:
+        cached_image, timestamp = image_cache[format_data]
+        if current_time - timestamp < CACHE_TTL:
+            return cached_image
+
+    # 如果缓存过期或不存在，重新生成图片
+    img = get_stages_image(format_data)
+    b_img = io.BytesIO()
+    img.save(b_img, format="PNG")
+
+    # 更新缓存
+    image_cache[format_data] = (b_img, current_time)
+
+    return b_img

@@ -7,6 +7,7 @@ from plugins.MySplatoon.splatoon_tools import *
 from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from common.log import logger
+from functools import lru_cache
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
 options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "/打工图", "/日程图"]
@@ -86,7 +87,7 @@ class MySplatoon(Plugin):
             elif self.content == "/日程图":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
-                img = get_stages_image(self.MySplatoon())
+                img = get_cached_image(self.MySplatoon())
                 b_img = io.BytesIO()
                 img.save(b_img, format="PNG")
                 result = b_img
