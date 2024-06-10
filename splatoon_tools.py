@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import io
 import tempfile
 import time
@@ -678,9 +679,11 @@ def get_cached_image(data):
     current_time = time.time()
 
     format_data = formatS3JSON(data)
+    # 计算 splatoon_data.a 的哈希值作为缓存字典的键
+    data_hash = hashlib.sha256(str(format_data[0]).encode('utf-8')).hexdigest()
     # 检查缓存是否存在且未过期
-    if format_data in image_cache:
-        cached_image, timestamp = image_cache[format_data]
+    if data_hash in image_cache:
+        cached_image, timestamp = image_cache[data_hash]
         if current_time - timestamp < CACHE_TTL:
             return cached_image
 
@@ -690,6 +693,6 @@ def get_cached_image(data):
     img.save(b_img, format="PNG")
 
     # 更新缓存
-    image_cache[format_data] = (b_img, current_time)
+    image_cache[data_hash] = (b_img, current_time)
 
     return b_img
