@@ -177,7 +177,10 @@ def drawer_text(drawer: ImageDraw, text, text_start_pos, text_width, font_color=
     line_space = 12
     for i, line in enumerate(para):
         drawer.text((text_start_pos[0], (line_space + font_size) * i + text_start_pos[1]), line, font_color, ttf)
-        w, h = ttf.getsize(line)
+        # w, h = ttf.getsize(line)
+        bbox = ttf.getbbox(line)  # 使用 textbbox 获取边界框
+        w = bbox[2] - bbox[0]  # 计算宽度
+        h = bbox[3] - bbox[1]  # 计算高度
         height += h + line_space
         # 取最长w
         if w > width:
@@ -312,7 +315,10 @@ def get_translucent_name_bg(
 ):
     """绘制 半透明文字背景"""
     ttf = ImageFont.truetype(font_path, font_size)
-    w, h = ttf.getsize(text)
+    # w, h = ttf.getsize(text)
+    bbox = ttf.getbbox(text)  # 使用 textbbox 获取边界框
+    w = bbox[2] - bbox[0]  # 计算宽度
+    h = bbox[3] - bbox[1]  # 计算高度
     # 文字背景
     text_bg_size = (w + 20, h + line_height)
     text_bg = get_file("filleted_corner").resize(text_bg_size).convert("RGBA")
@@ -335,7 +341,10 @@ def get_time_head_bg(time_head_bg_size, date_time, start_time, end_time):
     # 绘制开始，结束时间 文字居中绘制
     ttf = ImageFont.truetype(ttf_path, 40)
     time_head_text = "{}  {} - {}".format(date_time, start_time, end_time)
-    w, h = ttf.getsize(time_head_text)
+    # w, h = ttf.getsize(time_head_text)
+    bbox = ttf.getbbox(time_head_text)  # 使用 textbbox 获取边界框
+    w = bbox[2] - bbox[0]  # 计算宽度
+    h = bbox[3] - bbox[1]  # 计算高度
     time_head_text_pos = (
         (time_head_bg_size[0] - w) / 2,
         (time_head_bg_size[1] - h) / 2 - 12,
