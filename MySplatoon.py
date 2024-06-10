@@ -9,11 +9,12 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
-options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "/打工图"]
+options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "/打工图", "/日程图"]
+
 
 @plugins.register(name="MySplatoon",
                   desc="查询屎不拉通3日程信息",
-                  version="1.0",
+                  version="1.1",
                   author="piplong",
                   desire_priority=123)
 class MySplatoon(Plugin):
@@ -25,7 +26,9 @@ class MySplatoon(Plugin):
         logger.info(f"[{__class__.__name__}] inited")
 
     def get_help_text(self, **kwargs):
-        help_text = f"发送【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取 Splatoon3 比赛信息，更多功能正在开发中~"
+        help_text = f"发送【/打工图】、【/日程图】获取 Splatoon3 图片信息（需@AiBot）" \
+                    f"发送【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息。" \
+                    f"更多功能正在开发中。欢迎提供意见~"
         return help_text
 
     def on_handle_context(self, e_context: EventContext):
@@ -80,6 +83,16 @@ class MySplatoon(Plugin):
                 # 图片类型
                 reply.type = ReplyType.IMAGE
 
+            elif self.content == "/日程图":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                img = get_stages_image(self.MySplatoon())
+                b_img = io.BytesIO()
+                img.save(b_img, format="PNG")
+                result = b_img
+                # 图片类型
+                reply.type = ReplyType.IMAGE
+
             if result is not None:
                 reply.content = result
                 e_context["reply"] = reply
@@ -124,6 +137,3 @@ if __name__ == "__main__":
         print("获取到的文案内容：", result)
     else:
         print("获取失败")
-
-
-
