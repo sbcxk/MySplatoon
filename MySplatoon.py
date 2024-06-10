@@ -87,10 +87,10 @@ class MySplatoon(Plugin):
             elif self.content == "/日程图":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
-                img = get_cached_image(self.MySplatoon())
-                b_img = io.BytesIO()
-                img.save(b_img, format="PNG")
-                result = b_img
+                result = get_cached_image(self.MySplatoon())
+                # b_img = io.BytesIO()
+                # img.save(b_img, format="PNG")
+                # result = b_img
                 # 图片类型
                 reply.type = ReplyType.IMAGE
 
