@@ -27,9 +27,10 @@ class MySplatoon(Plugin):
         logger.info(f"[{__class__.__name__}] inited")
 
     def get_help_text(self, **kwargs):
-        help_text = f"【温馨提示】下列功能均需 @AiBot 后发送\n" \
-                    f"👉发送：【/打工图】、【/日程图】获取 Splatoon3 日程图片信息\n" \
-                    f"👉发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息\n" \
+        help_text = f"【温馨提示】下列功能均需 @机器人 后发送\n\n" \
+                    f"👉发送：【/日程图 】、【/打工图】获取 Splatoon 3 日程图片信息\n\n" \
+                    f"👉发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息\n\n" \
+                    f"参考致谢：https://github.com/Cypas/splatoon3-schedule\n\n" \
                     f"更多功能正在开发中，欢迎提供意见~"
         return help_text
 
