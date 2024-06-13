@@ -117,7 +117,10 @@ def get_coop_stages(data):
             text += weapon['name']
             if index < len(group.weapons) - 1:  # 检查是否是最后一个元素
                 text += "、"
-        text += "\nBoss: " + group.boss['name']
+        if group.boss['name'] == "Megalodontia":
+            text += "\nBoss: " + "巨颚"
+        else:
+            text += "\nBoss: " + group.boss['name']
         if i < len(data[4].groups) - 1:  # 检查是否是最后一个元素
             text += "\n\n"
     return text

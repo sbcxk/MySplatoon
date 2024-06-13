@@ -10,8 +10,14 @@ from common.log import logger
 from functools import lru_cache
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
-options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "/打工图", "/日程图"]
-
+options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动",
+           "/喷喷", "/喷喷3", "/斯普拉遁",
+           "/打工图", "/日程图"]
+help_text = f"【温馨提示】下列功能群聊中均需 @机器人 后发送\n\n" \
+            f"👉发送：【/日程图 】、【/打工图】获取 Splatoon 3 日程图片信息\n\n" \
+            f"👉发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息\n\n" \
+            f"参考致谢：https://github.com/Cypas/splatoon3-schedule\n\n" \
+            f"更多功能正在开发中，欢迎提供意见~"
 
 @plugins.register(name="MySplatoon",
                   desc="查询屎不拉通3日程信息",
@@ -27,11 +33,6 @@ class MySplatoon(Plugin):
         logger.info(f"[{__class__.__name__}] inited")
 
     def get_help_text(self, **kwargs):
-        help_text = f"【温馨提示】下列功能均需 @机器人 后发送\n\n" \
-                    f"👉发送：【/日程图 】、【/打工图】获取 Splatoon 3 日程图片信息\n\n" \
-                    f"👉发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息\n\n" \
-                    f"参考致谢：https://github.com/Cypas/splatoon3-schedule\n\n" \
-                    f"更多功能正在开发中，欢迎提供意见~"
         return help_text
 
     def on_handle_context(self, e_context: EventContext):
@@ -40,7 +41,13 @@ class MySplatoon(Plugin):
         self.content = e_context["context"].content.strip()
         result, reply = None, None
         if self.content in options:
-            if self.content == "/涂地":
+            if self.content == "/喷喷" or self.content == "/喷喷3" or self.content == "/斯普拉遁":
+                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                reply = Reply()
+                reply.type = ReplyType.TEXT
+                result = help_text
+
+            elif self.content == "/涂地":
                 logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                 reply = Reply()
                 reply.type = ReplyType.TEXT
