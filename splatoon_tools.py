@@ -208,7 +208,12 @@ def get_coop_info(data, _all=None):
             w.append(weapons['icon'])
         weapon.append(w)
         time.append(get_str_time(group.startAt, group.endAt))
-        boss.append(group.boss['icon'])
+        # boss.append(group.boss['icon'])
+        # 兼容接口没有巨额图像时的数据
+        if group.boss['name'] == "Megalodontia" and group.boss['icon'] == "":
+            boss.append('https://splatoon3.ink/assets/king-megalodontia.8af4f557.png')
+        else:
+            boss.append(group.boss['icon'])
         mode.append("coop")
 
     return stage, stage_name, weapon, time, boss, mode
@@ -700,7 +705,8 @@ def get_cached_image(data):
 
         return b_img
     except Exception as e:
-        logger.info(f"主接口获取成功：{e}")
+        logger.info(f"缓存逻辑异常：{e}")
+        format_data = formatS3JSON(data)
         # 如果缓存部分出现异常，直接走正常逻辑
         img = get_stages_image(format_data)
         b_img = io.BytesIO()
