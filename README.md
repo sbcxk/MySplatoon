@@ -7,8 +7,13 @@
 
 发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息
 
-示例![img.png](ImageData/img.png)
+示例
 
+获取打工日程
+![img.png](ImageData/img.png)
+
+获取常规比赛日程
 ![img.png](ImageData/img_1.png)
 
+获取打工日程文字版
 ![img.png](ImageData/img_2.png)
