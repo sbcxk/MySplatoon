@@ -39,67 +39,78 @@ class MySplatoon(Plugin):
         self.content = e_context["context"].content.strip()
         result, reply = None, None
         if self.content in options:
-            if self.content == "喷喷" or self.content == "斯普拉遁":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+            try:
+                if self.content == "喷喷" or self.content == "斯普拉遁":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = help_text
+
+                elif self.content == "/涂地":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_regular(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/蛮颓开放":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_bankara_open(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/蛮颓挑战":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/打工":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_coop_stages(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/活动":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_event(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/x比赛":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    reply.type = ReplyType.TEXT
+                    result = get_x_match(formatS3JSON(self.MySplatoon()))
+
+                elif self.content == "/打工图":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    img = get_coop_stages_image(self.MySplatoon())
+                    b_img = io.BytesIO()
+                    img.save(b_img, format="PNG")
+                    result = b_img
+                    # 图片类型
+                    reply.type = ReplyType.IMAGE
+
+                elif self.content == "/日程图":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    result = get_cached_image(self.MySplatoon())
+                    # b_img = io.BytesIO()
+                    # img.save(b_img, format="PNG")
+                    # result = b_img
+                    # 图片类型
+                    reply.type = ReplyType.IMAGE
+            except Exception as e:
+                # 初始化失败日志
+                logger.warn(f"MySplatoon init failed: {e}")
                 reply = Reply()
                 reply.type = ReplyType.TEXT
-                result = help_text
+                reply.content = "【网络异常】图片生成失败，请稍后重试"
+                e_context["reply"] = reply
+                e_context.action = EventAction.BREAK_PASS
+                return
 
-            elif self.content == "/涂地":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_regular(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/蛮颓开放":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_bankara_open(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/蛮颓挑战":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_bankara_challenge(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/打工":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_coop_stages(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/活动":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_event(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/x比赛":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                reply.type = ReplyType.TEXT
-                result = get_x_match(formatS3JSON(self.MySplatoon()))
-
-            elif self.content == "/打工图":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                img = get_coop_stages_image(self.MySplatoon())
-                b_img = io.BytesIO()
-                img.save(b_img, format="PNG")
-                result = b_img
-                # 图片类型
-                reply.type = ReplyType.IMAGE
-
-            elif self.content == "/日程图":
-                logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
-                reply = Reply()
-                result = get_cached_image(self.MySplatoon())
-                # b_img = io.BytesIO()
-                # img.save(b_img, format="PNG")
-                # result = b_img
-                # 图片类型
-                reply.type = ReplyType.IMAGE
 
             if result is not None:
                 reply.content = result
