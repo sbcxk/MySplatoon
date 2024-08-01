@@ -7,12 +7,17 @@ import time
 from plugins.MySplatoon.image_processer_tools import *
 from plugins.MySplatoon.utils import *
 from common.log import logger
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import requests
 
 # 全局缓存字典
 image_cache = {}
+image_stages_cache = {}
 
 # 缓存有效期（秒）
 CACHE_TTL = 2 * 60 * 60  # 2小时
+CACHE_TTL_STAGES = 3 * 60 * 60  # 3小时
 
 # 类 图片信息 ImageInfo
 class ImageInfo:
@@ -214,7 +219,7 @@ def get_coop_info(data, _all=None):
         # boss.append(group.boss['icon'])
         # 兼容接口没有巨额图像时的数据
         if group.boss['name'] == "Megalodontia" and group.boss['icon'] == "":
-            boss.append('https://splatoon3.ink/assets/king-megalodontia.8af4f557.png')
+            boss.append('https://piplong-img.oss-cn-hangzhou.aliyuncs.com/img/king-megalodontia.8af4f557.png')
         else:
             boss.append(group.boss['icon'])
         mode.append("coop")
@@ -716,3 +721,97 @@ def get_cached_image(data):
         img.save(b_img, format="PNG")
         return b_img
 
+def get_coop_stages_cache_image(data):
+    global image_cache
+    current_time = time.time()
+
+    try:
+        format_data = formatS3JSON(data)
+        # 计算 splatoon_data.a 的哈希值作为缓存字典的键
+        data_hash = hashlib.sha256(str(format_data[4].groups[0].startAt).encode('utf-8')).hexdigest()
+        logger.info(f"data_hash: {data_hash}")
+        # 检查缓存是否存在且未过期
+        if data_hash in image_cache:
+            cached_image, timestamp = image_cache[data_hash]
+            logger.info(f"cached_image: {cached_image}, timestamp: {timestamp}, current_time: {current_time}")
+            if current_time - timestamp < CACHE_TTL_STAGES:
+                return cached_image
+
+        # 如果缓存过期或不存在，重新生成图片
+        img = get_stages_image(format_data)
+        b_img = io.BytesIO()
+        img.save(b_img, format="PNG")
+
+        # 更新缓存
+        image_cache[data_hash] = (b_img, current_time)
+
+        return b_img
+    except Exception as e:
+        logger.info(f"缓存逻辑异常：{e}")
+        format_data = formatS3JSON(data)
+        # 如果缓存部分出现异常，直接走正常逻辑
+        img = get_coop_stages_image(format_data)
+        b_img = io.BytesIO()
+        img.save(b_img, format="PNG")
+        return b_img
+
+def draw_ceremony(u):
+    # 获取数据
+    url = u  # 替换为实际的URL
+    response = requests.get(url=url)
+    data = response.json()
+
+    # 下载图片
+    pic_url = data['data']['pic']
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Referer': 'https://splatoon.com.cn/'
+    }
+    pic_response = requests.get(url=pic_url,headers=headers)
+    pic_image = Image.open(io.BytesIO(pic_response.content))
+
+    # 创建新图像
+    # font_path = 'font/arial.ttf'  # 替换为实际的字体文件路径
+    font = ImageFont.truetype(ttf_path_song, 25)
+    font_small = ImageFont.truetype(ttf_path_song, 20)
+
+    width, height = pic_image.size
+    new_height = height + 500  # 预留一些空间给文本和饼图
+    new_image = Image.new('RGB', (width, new_height), 'white')
+    draw = ImageDraw.Draw(new_image)
+
+    # 绘制下载的图片
+    new_image.paste(pic_image, (0, 0))
+
+    # 绘制文本
+    name = data['data']['name']
+    description = data['data']['description']
+    draw.text((10, height + 10), name, fill="black", font=font)
+    draw.text((10, height + 60), description, fill="black", font=font_small)
+
+    # 绘制饼状图
+    options = data['data']['options']
+    labels = [f"{option['name']} ({option['vote_num']})" for option in options]
+    colors = [option['color'] for option in options]
+    sizes = [option['vote_num'] for option in options]
+
+    # 设置中文字体
+    zh_font = fm.FontProperties(fname=ttf_path_song,size=18)
+
+    plt.figure(figsize=(width / 100, 4))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140,
+            textprops={'fontproperties': zh_font})
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    # 将饼状图保存为图像
+    pie_buf = io.BytesIO()
+    plt.savefig(pie_buf, format='png', bbox_inches='tight', pad_inches=0.1)
+    pie_buf.seek(0)
+    pie_image = Image.open(pie_buf)
+
+    # 将饼状图粘贴到新图像上
+    new_image.paste(pie_image, (0, height + 90))
+
+    # 保存最终图像
+    # new_image.save('result_image.png')
+    return new_image

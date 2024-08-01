@@ -38,6 +38,7 @@ weapon_folder = os.path.join(DIR_RESOURCE, "weapon")
 font_folder_path = os.path.join(DIR_RESOURCE, "font")
 ttf_path = os.path.join(font_folder_path, "common.otf")
 ttf_path_chinese = os.path.join(font_folder_path, "cn.ttf")
+ttf_path_song = os.path.join(font_folder_path, "songti.ttf")
 ttf_path_jp = os.path.join(font_folder_path, "Splatfont2.otf")
 
 
@@ -82,7 +83,11 @@ def get_weapon(name):
 
 def get_image_from_url(url: str) -> Image:
     """从 URL 获取图片并进行处理"""
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Referer': 'https://splatoon.com.cn/page/32'
+    }
+    response = requests.get(url=url, headers=headers, verify=False)
     image_data = response.content
     # 如果是太大的图片，需要压缩到100k以下确保最后发出图片的大小
     image_data = compress_image(image_data, kb=100, step=10, quality=50)

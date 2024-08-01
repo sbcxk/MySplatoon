@@ -10,11 +10,17 @@ from common.log import logger
 from functools import lru_cache
 
 BASE_URL_DM = "https://splatoon.com.cn/api/datasource/external/schedule/list?version=3"
-options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "喷喷", "斯普拉遁", "/打工图", "/日程图"]
+options = ["/涂地", "/蛮颓开放", "/蛮颓挑战", "/x比赛", "/打工", "/活动", "喷喷", "斯普拉遁", "/打工图", "/日程图", "/祭典", "/最终祭"]
 help_text = f"【温馨提示】下列功能群聊中均需 @机器人 后发送\n\n" \
             f"👉发送：【/日程图 】、【/打工图】获取 Splatoon 3 日程图片信息\n\n" \
             f"👉发送：【/涂地】、【/蛮颓开放】、【/蛮颓挑战】、【/x比赛】、【/打工】、【/活动】获取比赛文字信息\n\n" \
             f"更多功能正在开发中，欢迎提供意见~"
+
+# 祭典
+url_ceremony='https://splatoon.com.cn/api/datasource/fest/festVote/content/22?id=22&postUrl=api%2Fdatasource%2Ffest%2FfestVote%2FaddVote%2F'
+url_final_ceremony='https://splatoon.com.cn/api/datasource/fest/festVote/content/23?id=23&postUrl=api%2Fdatasource%2Ffest%2FfestVote%2FaddVote%2F'
+
+
 # f"参考致谢：https://github.com/Cypas/splatoon3-nso\n\n" \
 
 @plugins.register(name="MySplatoon",
@@ -85,10 +91,10 @@ class MySplatoon(Plugin):
                 elif self.content == "/打工图":
                     logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
                     reply = Reply()
-                    img = get_coop_stages_image(self.MySplatoon())
-                    b_img = io.BytesIO()
-                    img.save(b_img, format="PNG")
-                    result = b_img
+                    result = get_coop_stages_cache_image(self.MySplatoon())
+                    # b_img = io.BytesIO()
+                    # img.save(b_img, format="PNG")
+                    # result = b_img
                     # 图片类型
                     reply.type = ReplyType.IMAGE
 
@@ -101,6 +107,26 @@ class MySplatoon(Plugin):
                     # result = b_img
                     # 图片类型
                     reply.type = ReplyType.IMAGE
+
+                elif self.content == "/祭典":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    img = draw_ceremony(url_ceremony)
+                    b_img = io.BytesIO()
+                    img.save(b_img, format="PNG")
+                    result = b_img
+                    # 图片类型
+                    reply.type = ReplyType.IMAGE
+
+                elif self.content == "/最终祭":
+                    logger.info(f"[{__class__.__name__}] 收到消息: {self.content}")
+                    reply = Reply()
+                    img = draw_ceremony(url_final_ceremony)
+                    b_img = io.BytesIO()
+                    img.save(b_img, format="PNG")
+                    result = b_img
+                    # 图片类型
+                    reply.type = ReplyType.IMAGE
             except Exception as e:
                 # 初始化失败日志
                 logger.warn(f"MySplatoon init failed: {e}")
@@ -110,7 +136,6 @@ class MySplatoon(Plugin):
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
                 return
-
 
             if result is not None:
                 reply.content = result
