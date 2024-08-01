@@ -738,7 +738,7 @@ def get_coop_stages_cache_image(data):
                 return cached_image
 
         # 如果缓存过期或不存在，重新生成图片
-        img = get_stages_image(format_data)
+        img = get_coop_stages_image(format_data)
         b_img = io.BytesIO()
         img.save(b_img, format="PNG")
 
@@ -758,7 +758,7 @@ def get_coop_stages_cache_image(data):
 def draw_ceremony(u):
     # 获取数据
     url = u  # 替换为实际的URL
-    response = requests.get(url=url)
+    response = requests.get(url=url，)
     data = response.json()
 
     # 下载图片
