@@ -722,7 +722,7 @@ def get_cached_image(data):
         return b_img
 
 def get_coop_stages_cache_image(data):
-    global image_cache
+    global image_stages_cache
     current_time = time.time()
 
     try:
@@ -731,8 +731,8 @@ def get_coop_stages_cache_image(data):
         data_hash = hashlib.sha256(str(format_data[4].groups[0].startAt).encode('utf-8')).hexdigest()
         logger.info(f"data_hash: {data_hash}")
         # 检查缓存是否存在且未过期
-        if data_hash in image_cache:
-            cached_image, timestamp = image_cache[data_hash]
+        if data_hash in image_stages_cache:
+            cached_image, timestamp = image_stages_cache[data_hash]
             logger.info(f"cached_image: {cached_image}, timestamp: {timestamp}, current_time: {current_time}")
             if current_time - timestamp < CACHE_TTL_STAGES:
                 return cached_image
@@ -743,7 +743,7 @@ def get_coop_stages_cache_image(data):
         img.save(b_img, format="PNG")
 
         # 更新缓存
-        image_cache[data_hash] = (b_img, current_time)
+        image_stages_cache[data_hash] = (b_img, current_time)
 
         return b_img
     except Exception as e:
@@ -786,8 +786,23 @@ def draw_ceremony(u):
     # 绘制文本
     name = data['data']['name']
     description = data['data']['description']
+
+    # 文本换行处理：每行最多 33 个字
+    max_chars_per_line = 33
+    description_lines = []
+    line_count = 0  # 初始化换行计数器
+
+    for i in range(0, len(description), max_chars_per_line):
+        line = description[i:i + max_chars_per_line]
+        description_lines.append(line)
+        line_count += 1  # 每添加一行，换行计数器加一
+
+    # 绘制名称
     draw.text((10, height + 10), name, fill="black", font=font)
-    draw.text((10, height + 60), description, fill="black", font=font_small)
+
+    # 绘制描述
+    for i, line in enumerate(description_lines):
+        draw.text((10, height + 60 + i * 30), line.strip(), fill="black", font=font_small)
 
     # 绘制饼状图
     options = data['data']['options']
@@ -810,7 +825,7 @@ def draw_ceremony(u):
     pie_image = Image.open(pie_buf)
 
     # 将饼状图粘贴到新图像上
-    new_image.paste(pie_image, (0, height + 90))
+    new_image.paste(pie_image, (0, height + 90 + line_count * 20))
 
     # 保存最终图像
     # new_image.save('result_image.png')
